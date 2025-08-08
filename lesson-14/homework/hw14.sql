@@ -379,8 +379,6 @@ SELECT EMPLOYEE_ID, FIRST_NAME, LAST_NAME, HIRE_DATE, DATEDIFF(YEAR, HIRE_DATE, 
 FROM Employees
 WHERE DATEDIFF(YEAR, HIRE_DATE, GETDATE()) > 10 AND DATEDIFF(YEAR, HIRE_DATE, GETDATE()) < 15;
 
-
-
 -- Medium tasks
 
 --(1) Write a SQL query to separate the integer values and the character values into two different columns.(rtcfvty34redt)
@@ -426,4 +424,67 @@ SELECT
     END AS ThirdFruit
 FROM fruits;
 
---(5) 
+--(5) Write a SQL query to create a table where each character from the string will be converted into a row.(sdgfhsdgfhs@121313131)
+-- Create the table to store individual characters
+CREATE TABLE CharacterRows (
+    Position INT,
+    Character CHAR(1)
+);
+
+-- Insert each character from the string into the table
+WITH CharPositions AS (
+    -- Anchor: Start with position 1
+    SELECT 1 AS Position
+    UNION ALL
+    -- Recursive: Increment position up to string length
+    SELECT Position + 1
+    FROM CharPositions
+    WHERE Position < LEN('sdgfhsdgfhs@121313131')
+)
+INSERT INTO CharacterRows (Position, Character)
+SELECT 
+    Position,
+    SUBSTRING('sdgfhsdgfhs@121313131', Position, 1) AS Character
+FROM CharPositions;
+
+-- Select the results to verify
+SELECT * FROM CharacterRows;
+
+--(6) You are given two tables: p1 and p2. Join these tables on the id column. 
+--The catch is: when the value of p1.code is 0, replace it with the value of p2.code.(p1,p2)
+SELECT * FROM p1
+SELECT * FROM p2
+
+SELECT p1.id, p1.code as p1_tbl, p2.code as p2_tbl,
+    CASE 
+        WHEN p1.code = 0 THEN p2.code 
+        ELSE p1.code 
+    END AS final_tbl
+FROM p1
+INNER JOIN p2
+    ON p1.id = p2.id;
+
+--(7) Write an SQL query to determine the Employment Stage for each employee based on their HIRE_DATE. The stages are defined as follows:
+--If the employee has worked for less than 1 year → 'New Hire'
+--If the employee has worked for 1 to 5 years → 'Junior'
+--If the employee has worked for 5 to 10 years → 'Mid-Level'
+--If the employee has worked for 10 to 20 years → 'Senior'
+--If the employee has worked for more than 20 years → 'Veteran'(Employees)
+
+SELECT FIRST_NAME, LAST_NAME,
+	CASE WHEN DATEDIFF(YEAR, HIRE_DATE, GETDATE()) <= 1 THEN 'New Hire'
+		 WHEN DATEDIFF(YEAR, HIRE_DATE, GETDATE()) BETWEEN 1 AND 5 THEN 'Junior'
+		 WHEN DATEDIFF(YEAR, HIRE_DATE, GETDATE()) BETWEEN 5 AND 10 THEN 'Mid-Level'
+		 WHEN DATEDIFF(YEAR, HIRE_DATE, GETDATE()) BETWEEN 10 AND 20 THEN 'Senior'
+		 ELSE 'Veteran'
+	END AS Employment_Stage
+FROM Employees;
+
+--(8) Write a SQL query to extract the integer value that appears at the start of the string in a column named Vals.(GetIntegers)
+SELECT *, 
+		CASE WHEN PATINDEX('%[0-9]%', VALS) = 1 THEN SUBSTRING(VALS, 1, PATINDEX('%[^0-9]%', VALS + ' ') - 1)
+			ELSE NULL
+		END AS Integers
+FROM GetIntegers
+
+
